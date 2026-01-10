@@ -149,5 +149,12 @@ Tiếp theo em sẽ thử đi theo giao dịch `output` địa chỉ ví của c
 
 <img width="2902" height="1655" alt="image" src="https://github.com/user-attachments/assets/aec966aa-7488-4d45-8718-fe5c8fc11246" />
 
-Tiếp tục để ý vào ngày diễn ra giao dịch là ngày 27/7/2023, ở địa chỉ ví này chúng ta thấy được người này có gửi số tiền khoảng 0,39 BTC đi, mà số lượng 
-    
+Tiếp tục để ý vào ngày diễn ra giao dịch là ngày 27/7/2023, ở địa chỉ ví này chúng ta thấy được người này có gửi số tiền khoảng 0,39 BTC đi, mà để ý lại ở giao dịch này ta thấy số tiền mà ví này nhận vào (input) là tổng khoảng 0,39 BTC mà theo suy nghĩ của em thì khi mà người yêu mình ngoại tình rồi thì mình sẽ gom hết tiền của mình để gửi đi qua darkweb, nên em suy nghĩ thì ví `bc1qadgwek3qhng2jfc25epwuvg4cfsuq3dy4p8ccj` chính là ví của bà Murphy, và output tiếp theo gửi đi số tiền 0,39 BTC chắc chắn sẽ là ví của sát thủ `bc1q44mw0cffurnex8jxqvtvap3fwv3et0v9lxdc3t` 
+
+<img width="2815" height="1598" alt="image" src="https://github.com/user-attachments/assets/4fb6b230-21c0-4de2-996c-5f6691d733ab" />
+
+Ở đây có một cái bẫy của đề, nếu chúng ta không nhớ về ngày giao dịch chúng ta sẽ chọn liền vào cái ví có số tiền gửi đi là 0,358 BTC, vì giao dịch này thực hiện vào ngày 29/7/2023 còn giao dịch được ghi nhận từ ví Murphy là 27/7/2023 nên giao dịch 0,358 kia sẽ loại. Kết luận ví sát thủ là `bc1q44mw0cffurnex8jxqvtvap3fwv3et0v9lxdc3t` và hash của ví `57ce32d129f4824aa8c7e71e56cf4908dcc32103f5fff3c3d6a08bd7bae78c48`
+
+**flag: RUSEC{57ce32d129f4824aa8c7e71e56cf4908dcc32103f5fff3c3d6a08bd7bae78c48}
+
+
