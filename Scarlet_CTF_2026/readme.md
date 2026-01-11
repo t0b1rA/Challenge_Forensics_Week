@@ -155,6 +155,9 @@ Tiếp tục để ý vào ngày diễn ra giao dịch là ngày 27/7/2023, ở 
 
 Ở đây có một cái bẫy của đề, nếu chúng ta không nhớ về ngày giao dịch chúng ta sẽ chọn liền vào cái ví có số tiền gửi đi là 0,358 BTC, vì giao dịch này thực hiện vào ngày 29/7/2023 còn giao dịch được ghi nhận từ ví Murphy là 27/7/2023 nên giao dịch 0,358 kia sẽ loại. Kết luận ví sát thủ là `bc1q44mw0cffurnex8jxqvtvap3fwv3et0v9lxdc3t` và hash của ví `57ce32d129f4824aa8c7e71e56cf4908dcc32103f5fff3c3d6a08bd7bae78c48`
 
-**flag: RUSEC{57ce32d129f4824aa8c7e71e56cf4908dcc32103f5fff3c3d6a08bd7bae78c48}
+**flag: RUSEC{57ce32d129f4824aa8c7e71e56cf4908dcc32103f5fff3c3d6a08bd7bae78c48}**
+
+
+
 
 
