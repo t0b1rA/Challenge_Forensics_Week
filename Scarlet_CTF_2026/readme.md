@@ -195,3 +195,93 @@ Sàn Binance - vì em nghĩ sàn này là sàn phổ biến nhất nên những 
 
 **FLAG: RUSEC{87bb6410cf4d11b4220a0ff32e6d63fa95308898a8704cd9b48e5587b565f179:11/07/2021:binance}**
 
+## Forensics/:(
+
+<img width="1218" height="304" alt="image" src="https://github.com/user-attachments/assets/5e66b9bb-262b-404e-a60d-37a07d5f1c23" />
+
+**Link tải đề:** https://ctf.rusec.club/uploads/044f6dc0c9f64857ae1fe20009a6754c48d792185e869b49a880a86224ebb584/sad_face.zip
+
+Ở bài này như tác giả nói, họ bị cài một cái payload gì đó vào máy và làm cho máy bị crash thành màn hình xanh, và đề bài cung cấp cho em một file `.zip`, và khi giải mã ra thì bên trong nó là một file `.evtx` công việc của em bây giờ là đọc docs và tìm xem payload mà "mentor" kia gửi cho nạn nhân.
+
+<img width="1192" height="888" alt="image" src="https://github.com/user-attachments/assets/1075e48f-4048-44c6-bd97-21cdd44e0900" />
+
+Họ cho ta một cái logs của application, tại vì sao là Application log mà không phải là System log? Ở đây em nghĩ là vì khi mà nạn nhân đã nhận được 1 payload của kẻ tấn công, và gây ra hiện tượng màn hình xanh trong windows - `màn hình xanh` trong windows là một lỗi liên quan đến việc sập hệ thống (System Crash), và sau khi hệ thống bị sập - trước khi nó tắt hoàn toàn hoặc khởi động lại thì Windows sẽ chạy một cơ chế có tên là `WER - Windows Error Reports` 
+
+  - Cơ chế `WER` nói qua thì nó là một cơ chế giúp windows ghi lại lỗi khiến cho hệ thống sập từ file `Memory dump` và lấy mã lỗi `BugCheck code` và ghi lại vào Application log sẽ dễ đọc hơn là ghi vào trong file `.dmp`
+
+Đó là một trong những lý do mà đề cung cấp cho ta file Application logs này. Sau một lúc em ngồi dò cái log thì em thấy có rất nhiều log error khoảng 30 log với các event id khác nhau:
+
+<img width="1161" height="242" alt="image" src="https://github.com/user-attachments/assets/e3c55ff3-646f-4413-ab14-6e92d2f55d34" />.
+
+  - **Event id 1001:** nó ghi lại những hoạt động gây lỗi nghiêm trọng (ở đây là sập hệ thống) hoặc sự cố ứng dụng, hiển thị thông tin chi tiết, tên chương trình gặp sự cố, thời gian xảy ra lỗi.
+    
+<img width="1053" height="241" alt="image" src="https://github.com/user-attachments/assets/11faf39a-a334-4ae6-ae4e-0386c747deb5" />
+
+  - **Event id 41:** Là một lỗi hệ thống của Windows cho biết máy tính đã khởi động lại mà không tắt hoàn toàn trước đó.
+
+<img width="1105" height="240" alt="image" src="https://github.com/user-attachments/assets/1f4dc64e-e31f-4a96-9d91-bd82bcc8e86e" />
+
+  - **Event id 6008:** cho biết hệ thống đã bị tắt đột ngột, không theo quy trình và đã khởi động lại không mong muốn. 
+
+Vậy thì logic của các log error được ghi lại thì nó sẽ theo quy trình là: Máy gặp sự cố sập hệ thống -> dẫn đến việc tắt đột ngột không mong muốn -> Sau đó buộc khởi động lại.
+
+Em đã tìm 1 lúc trong những cái trên mạng và theo quy trình đó thì mới tìm ra là vấn đề nó nằm trong phần Detail của các log error này.
+
+<img width="1141" height="540" alt="image" src="https://github.com/user-attachments/assets/1176ea76-f3d4-4ac3-a06f-dfd845a057a2" />
+
+<img width="1041" height="412" alt="image" src="https://github.com/user-attachments/assets/497c28bc-fed6-46a8-a3c1-d329ed00cd2e" />
+
+Mỗi log nó đều chứa 1 dòng binary ở đây.
+
+Sau đó em bắt đầu thực hiện lấy payload trong dòng binary của từng event log và cho lên cyberchef, nhưng mà em không decode ra được bằng base64 ra được, nên em nhờ AI để viết hộ em script để giải mã:
+
+```python
+import string
+import base64
+
+b64 = [
+"BppCTUE1i3825UwqP9UDaj71NdSXowxSPcI/XA==",
+"TED5ocxPeiQziOrTQsJhAna42gc/iUkaHVEaRg==",
+"BHX01ANtcdylDobfffrdzM3Cm50BrcxPTqso4A==",
+"vKnvBzqLaJQXlCLsuDNYliTMWzPD0U6FgAY1eg==",
+"SRurKI6HYICisSSHf+g7YwWFP9CpkgkXLjoCyg==",
+"Ak+mW8WlVzgUN7+UuiC2LVyPAGZstoxNYJUQZA==",
+"jsFhexmhTyWeVcEwgdWa+j1I5ANSeEbfDsndtA==",
+"R/Zdr1C/Rt0Q2108vA0VxJRSpZkUnMkVQCTrTg==",
+"UlVTRUN7M3Rlcm5hbF9ibHUzXw==",
+"jJwTAtvZNYENfvvkv/p0XMwVSsy8ggbdILPFOA==",
+"/nRz8Ic+D2hbYndEKEu0WNCfiA4=",
+"i+UvENs6B1XmgHnf8ACYJbFZbKs=",
+"QxoqQxJY/g1YBhXsKzgT7whjLUE=",
+"iMDgl51y7bFVqbOULSVyh0Am0nQ=",
+'zWaX6yiM3FZSTVE8LxLQHnjpdqc=',
+"c0BkX2ZhYzNfc21idg==",
+"Ps+NUZfIysY2WIhVpYPHsiX999Q=",
+"y0FJcurEwrLAdorxbTiqfwa23HE=",
+"EOcAxXXesVe9GSiZbyUJFz55gaQ=",
+"yRz7+a38qA8vn8Smql2E4ZWDQTo=",
+"DsKxTDgWl7QsQ2JOrErjeM1G5m0=",
+"xvatgG80jmyeyf1a54NeQiRQpgM=",
+"fiuos6ZShSQQT5lnIrvZDHtaZ5k=",
+"MV8zODkwY24yazI5fQ==",
+"xNFeBzFtdMgN8jcPJKg4o7MeDMw=",
+"UEMaJ4VpbLWYDzmr7F0bcZTX8Gk=",
+"CXcVWryHY20KldW3J5WXO+vhsP8=",
+'wawQjvOlWiV8G3HEYs4SBUHrcZU=',
+"Th3MrkehUhEGOXNfKYL10iOkVTI=",
+"BlLH4X6/Scl4vw5sZLtwnHmuFsg=" 
+]
+flag = ""
+for item in b64:
+    try:
+        decode_bytes = base64.b64decode(item)
+        decoded_text = decode_bytes.decode('utf-8')
+        
+        if all(c in string.printable for c in decoded_text):
+            flag += decoded_text
+    except Exception:
+        pass
+
+print(flag)
+```
+**Flag: RUSEC{3ternal_blu3_s@d_fac3_smbv1_3890cn2k29}**
