@@ -1,4 +1,4 @@
-Hôm nay em sẽ viết writeup của 3 bài trong giải này, trong đó có 1 bài em chưa giải toàn bộ nhưng mà em vẫn ghi lại kiến thức em học được.
+Hôm nay em sẽ viết writeup của 4 bài trong giải này, trong đó có 1 bài em chưa giải toàn bộ nhưng mà em vẫn ghi lại kiến thức em học được.
 
 
 ## Forensics/Advanced Packaged Threat
