@@ -158,6 +158,40 @@ Tiếp tục để ý vào ngày diễn ra giao dịch là ngày 27/7/2023, ở 
 **flag: RUSEC{57ce32d129f4824aa8c7e71e56cf4908dcc32103f5fff3c3d6a08bd7bae78c48}**
 
 
+## Forensics/Peel That Off!
 
+<img width="890" height="545" alt="image" src="https://github.com/user-attachments/assets/3fc78b18-8e23-4c93-989b-c3b645fdfd83" />
 
+Đây là một vụ mà họ đã tìm thấy một ổ nhóm lừa đảo đang thực hiện đang thực hiện rút tiền từ bitcoin. Và dường như những người này đang thực hiện kỹ thuật (peel chain) "bóc tách dừng lớp". Giải thích qua một tí thì đây là một kĩ thuật dùng để rút tiền trên bitcoin mà không để cho hệ thống chống rửa tiền **(AML)** phát hiện và đóng băng tài khoản của họ. Để như bài này thì những kẻ này sẽ thực hiện việc đưa lên sàn một số tiền nhỏ để rút (rửa tiền) xong nó chuyển số tiền to đó từ ví A sang B, rồi từ ví B nó sẽ rút 1 số tiền nhỏ khác và chuyển cục tiền to từ ví B sang C, rồi tương tự như vậy đến đoạn cuối của giao dịch (sau đó lấy giá trị hash của giao dịch cho cục tiền cuối cùng, ngày giao dịch và sàn giao dịch)
+
+<img width="1818" height="863" alt="image" src="https://github.com/user-attachments/assets/75e5b986-aebc-4634-a5c7-290f4dc743b7" />
+
+Ở đây như trong suy luận trên thì những tên lừa đảo này đang thực hiện chuyển tiền sang từng ví và rút các số tiền nhỏ trong mỗi ví. Chúng ta chỉ cần theo chân ví có số tiền lớn để đi tới giao dịch cuối
+
+```
+Ln: output0 , output 1
+
+L1:  140,  1.00653407 BTC
+L2: 134.99999004 BTC , 5 BTC
+L3: 129.99995518 BTC , 5 BTC
+L4: 124.99991202 BTC , 5 BTC
+L5: 114.99966302 BTC , 10 BTC
+L6: 104.99941568 BTC , 10 BTC
+L7: 104.95936688 BTC , 0,04 BTC
+L8: 89.95924488 BTC , 15 BTC 
+L9: 79.95914728 BTC , 10 BTC 
+L10: 79.91832328 BTC , 0.04058 BTC 
+L11: 56.91807928 BTC , 23 BTC
+L12: 53.91806248 BTC , 3 BTC
+```
+
+Sau 1 lúc làm thì ví chứa cục tiền cuối có địa chỉ là `3FZCx5WqQMJPeYHeNW3vswbBTQW2VhzDT7`
+
+<img width="1844" height="503" alt="image" src="https://github.com/user-attachments/assets/f342a44e-d4d6-4c7e-8500-e20dd942e3e8" />
+
+Giá trị hash: `87bb6410cf4d11b4220a0ff32e6d63fa95308898a8704cd9b48e5587b565f179`
+Ngày tháng: 07/11/2021
+Sàn Binance - vì em nghĩ sàn này là sàn phổ biến nhất nên những kẻ lừa đảo có thể thực hiện ở đây.
+
+**FLAG: RUSEC{87bb6410cf4d11b4220a0ff32e6d63fa95308898a8704cd9b48e5587b565f179:11/07/2021:binance}**
 
