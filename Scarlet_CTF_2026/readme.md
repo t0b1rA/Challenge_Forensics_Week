@@ -97,7 +97,7 @@ Cũng không có kết quả gì, lúc này em lên mạng tìm hiểu thêm th�
 Em có tìm hiểu trên mạng thì hành động nhúng một đoạn bash script vào trong 1 file `.deb` gọi là kỹ thuật **Maintainer Scripts** trong cấu trúc gói tin *debian*, hành động mà attacker thực hiện chính là tạo **Backdooring Debian Packages** (tạo cửa sau cho 1 gói tin debian) bằng cách lạm dụng `postinst` script và `preinst`.
 Hệ thống quản lí gói tin `dpkg` cho phép người tạo gói tin có thể nhúng thêm vào đó những đoạn script trước quá trình cài đặt/gỡ bỏ gói tin đó. Trong đó 2 đoạn script được sử dụng trong bài là `postinst` script sẽ tự động chạy sau khi cài đặt gói tin. Và script `preinst` sẽ tự động chạy trước khi xóa gói tin.
 
-Em lên mạng tìm hiểu thêm thì mình có thể xem được nội dung của 2 đoạn script trong cấu trúc gói tin `debian`, chỉ cần thêm tên của loại script được nhúng trong file `.deb` vào phần sau câu lệnh xem mô tả của file `.deb` là được.
+Em lên mạng tìm hiểu thêm thì mình có thể xem được nội dung của 2 đoạn script trong file `debian`, chỉ cần thêm tên của loại script được nhúng trong file `.deb` vào phần sau câu lệnh xem mô tả của file `.deb` là được.
 ```
                                                                                                                                                                                     
 ┌──(nhduydeptrai㉿tobi)-[~/Scarlet_CTF_2026/file pcap]
