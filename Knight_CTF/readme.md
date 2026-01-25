@@ -128,6 +128,10 @@ Em dựa vào thông tin mình biết được tên ứng dụng Web là `WordPr
 Mình cũng đồng thời tìm được lỗ hổng mà attacker khai thác dựa vào PoC chính là dựa vào 1 tính năng Debug của Social Warface trong file: `lib/utilities/SWP_Database_Migration.php`. Plugins có một đoạn code kiểm tra nếu tham số `swp_debug` có giá trị là `load_option` , nó được admin dùng để nạp thêm file config từ xa cho server, đồng thời attacker đã tìm ra lỗ hổng này và khai thác nó.
 
 
+## Post-Exploitation
+
+<img width="866" height="799" alt="image" src="https://github.com/user-attachments/assets/33135283-4789-47a2-b90c-25104cfdb110" />
+
 
 
 
