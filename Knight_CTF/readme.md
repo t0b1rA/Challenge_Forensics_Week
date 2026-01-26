@@ -155,3 +155,24 @@ Attacker đã thực hiện chạy script độc: `system("bash -c \"bash -i >& 
 
 Vậy kết luận lại thì: Lúc này kẻ tấn công đã lợi dụng được lổ hổng của web WordPress và thực hiện tải về một payload và thực thi nó, payload này cho phép kẻ tấn công thực hiện `reverse shell` lên server. Cổng mà server tải về payload là `port:8767` còn cổng reverse shell máy nạn nhân là `port:9576`.
 
+
+
+## Database Credentials Theft
+
+<img width="861" height="973" alt="image" src="https://github.com/user-attachments/assets/e388835e-e928-4c56-9d5d-132501bf5334" />
+
+Ở câu này em biết được attacker sẽ bắt đầu thực hiện kết nối tcp tới server theo 3 bước bắt tay, để có thể bắt đầu quá trình reverse shell, trên server, nên em sẽ filter như sau: `ip.src == 192.168.1.104 && ip.port == 9576 && tcp.flags.ack == 1` để chắc chắn lọc ra những kết nối thành công, và có thể xem được quá trình reverse shell.
+
+
+<img width="1280" height="1038" alt="image" src="https://github.com/user-attachments/assets/e1dc2ae2-2ee3-4d45-9912-3d9e82f2ce86" />
+
+Attacker bắt đầu thực hiện reverse shell. Nhiệm vụ của chúng ta là tìm được username và passwd mà kẻ tấn công sau khi thâm nhập vào được server sẽ trích xuất database username và passwd đó ra. 
+
+<img width="968" height="817" alt="image" src="https://github.com/user-attachments/assets/351bf7e3-ce2b-477a-8498-5d7197b8de79" />
+
+Đây là file mà kẻ tấn công sẽ có thể trích xuất được username và passwd đó ra. Em đọc một lúc thì thấy được nó lưu trữ username và passwd bên trong ws-config.php 
+
+```
+username: wpuser
+passwd: wp@user123
+```
