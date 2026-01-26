@@ -122,10 +122,10 @@ Vậy thì hiện tại chúng ta đã xác định được tên người dùng
 
 Tình huống tiếp theo trong chains tấn công này, là kẻ tấn công đã bắt đầu có thâm nhập vào được trang web thông qua một lỗ hổng plugins. Bây giờ chúng ta cần điều tra xem lỗ hổng đã được khai thác là gì.
 
-Em dựa vào thông tin mình biết được tên ứng dụng Web là `WordPress` cùn với biết được là lỗ hổng của plugins, thì em tìm hiểu được trên mạng 1 lỗ hổng của plugins: `Social Warface`, tình cờ trong lúc em phân tích trang `login.php` mà kẻ tấn công đã thực hiện đăng nhập cũng có hiển thị plugins này trên thanh url: `http://192.168.1.102/wordpress/wp-content/plugins/social-warfare/assets/js/post-editor/dist/blocks.style.build.css?ver=6.9`.
+Em dựa vào thông tin mình biết được tên ứng dụng Web là `WordPress` cùn với biết được là lỗ hổng của plugins, thì em tìm hiểu được trên mạng 1 lỗ hổng của plugins: `Social Warface`, tình cờ trong lúc em phân tích trang `login.php` mà kẻ tấn công đã thực hiện đăng nhập cũng có hiển thị plugins này trên thanh url: `http://192.168.1.102/wordpress/wp-content/plugins/social-warfare/assets/js/post-editor/dist/blocks.style.build.css?ver=6.9`. Cách kẻ tấn công lợi dụng lỗ hổng này, em lên mạng tìm hiểu thêm thì nó nằm ở trong logic code của chức năng nằm trong file: `wp-admin/admin-post.php`. Đây là chức năng giúp trang web WordPress có thể tự động debug và cập nhập cấu hình từ xa.
 
+Khi server kiểm tra tham số `swp_debug` trên thanh url nếu nó được set `swp_debug=load_options`, thì lúc này nó sẽ tiếp tục thực hiện đọc tham số `swp_url` để lấy 1 đường dẫn. Và server sẽ tự động truy cập vào đường dẫn đó để tải nội dung về. Nội dung của nó sẽ nằm trong 1 thẻ `<pre>  </pre>` và thực hiện chạy hàm `eval()` nội dung trong thẻ đó. Đặc biệt là hàm `eval()` sẽ thực thi mã ngay lập tức mà không đi qua khâu kiểm tra thử. Đó là điểm mà attacker khai thác vào.
 
-Mình cũng đồng thời tìm được lỗ hổng mà attacker khai thác dựa vào PoC chính là dựa vào 1 tính năng Debug của Social Warface trong file: `lib/utilities/SWP_Database_Migration.php`. Plugins có một đoạn code kiểm tra nếu tham số `swp_debug` có giá trị là `load_option` , nó được admin dùng để nạp thêm file config từ xa cho server, đồng thời attacker đã tìm ra lỗ hổng này và khai thác nó.
 
 
 ## Post-Exploitation
