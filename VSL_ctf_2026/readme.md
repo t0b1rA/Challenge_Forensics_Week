@@ -29,7 +29,29 @@ Em cắt ra rồi trích xuất lên cyberchef thì được:
 
 <img width="1532" height="565" alt="image" src="https://github.com/user-attachments/assets/4544213b-e347-4965-b697-18ec0738a49d" />
 
-À vậy đây ra là phần đầu của flags, nó sử dụng kĩ thuật `dns tunneling` để giấu một phần dữ liệu bên trong tên miền được truy vấn tới. Giờ em sẽ tiếp tục tìm tiếp, có thể họ vẫn sẽ sử dụng kĩ thuật này. Em dựa vào địa chỉ ip mà nạn nhân bị tuồng dữ liệu ra địa chỉ ip bên ngoài là `ip.src == 172.26.31.148 && ip.dst == 10.23.11.27`. Sau 1 lúc tìm kiếm tiếp thì em thấy địa chỉ ip `172.26.31.148` thực hiện tạo kết nối tcp với ip `10.23.11.27` để thực hiện request POST dữ liệu ra cho ip của kẻ nhận dữ liệu `10.23.11.27`
+**part1: VSL{n3tw0rk_tunn3**
+
+À vậy đây ra là phần đầu của flags, nó sử dụng kĩ thuật `dns tunneling` để giấu một phần dữ liệu bên trong tên miền được truy vấn tới. Giờ em sẽ tiếp tục tìm tiếp, có thể họ vẫn sẽ sử dụng kĩ thuật này. Em dựa vào địa chỉ ip mà nạn nhân bị tuồng dữ liệu ra địa chỉ ip bên ngoài là `ip.src == 172.26.31.148 && ip.dst == 10.23.11.27`. Em thấy bên trong mục `statistic protocol` vẫn còn 1 giao thức `icmp`, có thể là kẻ tấn công sẽ sử dụng kĩ thuật icmp exfiltration, để tuồng dữ liệu ra ngoài qua phần lenght dư ra trong dữ liệu thực tế của mỗi gói tin khi ping từ ip `172.26.31.148` tới ip `10.23.11.27`.
+
+<img width="1909" height="417" alt="image" src="https://github.com/user-attachments/assets/327e8cda-98d6-4ad8-86f4-afde3823da41" />
+
+Đây là kết quả khi em nghi ngờ và filter theo icmp, em thấy bên trong các gói tin icmp có các dữ liệu lạ, em nghĩ đây là kĩ thuật `icmp tunneling` kẻ tấn công cố tình chèn vào đó các dữ liệu đã bị đánh cắp và tuồng ra ngoài thực hiện hành vi icmp exfiltration.
+
+Để lấy các dữ liệu bị đóng gói bên trong ra em dùng lệnh tshark `tshark -r challenge.pcapng -Y 'icmp.type == 8' -T fields -e data.data`.
+
+<img width="1915" height="901" alt="image" src="https://github.com/user-attachments/assets/37845cec-f195-4cbb-8e76-31b91f79d6d4" />
+
+Sau đó em thấy các mảnh base64 bị lặp lại và cách nhau từ các kí tự rác, thì em xóa đi các kí tự lặp lại và rác và ghép những mảnh base64 lại với nhau thì được:
+
+<img width="1512" height="827" alt="image" src="https://github.com/user-attachments/assets/f650f159-350a-429f-8eee-c0cd1f43e462" />
+
+Việc mà trong phần em thu được có các bytes rác, là do trong quá trình exfil dữ liệu ra bằng icmp, thì attacker cũng thực hiện chèn thêm các gói tin rác ở giữa các gói tin tuồn dữ liệu ra, nên mới xảy ra có bytes rác bên trong mục dữ liệu, giờ xóa đi các bytes rác, mảnh base64 lặp lại, và ghép các mảnh base64 lại với nhau để thu được dữ liệu intend.
+
+<img width="1509" height="897" alt="image" src="https://github.com/user-attachments/assets/3a72af7b-8e87-4145-965d-84ec80d61828" />
+
+**part2: l1ng_15_c0mm0n_**
+
+Sau 1 lúc tìm kiếm tiếp thì em thấy địa chỉ ip `172.26.31.148` thực hiện tạo kết nối tcp với ip `10.23.11.27` để thực hiện request POST dữ liệu ra cho ip của kẻ nhận dữ liệu `10.23.11.27`
 
 <img width="1873" height="620" alt="image" src="https://github.com/user-attachments/assets/33dbb074-489b-4e64-9fb2-64306d13115b" />
 
@@ -43,8 +65,10 @@ Em thực hiện follow theo 2 gói tin có request POST dữ liệu tiếp thì
 
 <img width="1281" height="829" alt="image" src="https://github.com/user-attachments/assets/2d30eac5-a433-4a9c-93dd-19259cc705d9" />
 
-Em đem nó lên cyberchef nốt với phần đầu mà em lấy được từ kĩ thuật `dns tunneling`, thì em có 1 chuỗi hoàn chỉnh:
+**part3: 4tt4ck_t3chn1qu3}**
 
-<img width="1532" height="615" alt="image" src="https://github.com/user-attachments/assets/c2778b5e-2136-4f56-af6d-6adf421a13be" />
+Em đem nó lên cyberchef nốt với phần đầu mà em lấy được từ kĩ thuật `dns tunneling`, kĩ thuật `icmp tunneling` thì em có được phần hoàn chỉnh của dữ liệu được tuồn ra bài này - flags hoàn chỉnh: 
 
-**flags: VSL{n3tw0rk_tunn34tt4ck_t3chn1qu3}**
+![Uploading image.png…]()
+
+**flags: VSL{n3tw0rk_tunn3l1ng_15_c0mm0n_4tt4ck_t3chn1qu3}**
