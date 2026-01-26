@@ -168,7 +168,7 @@ Vậy kết luận lại thì: Lúc này kẻ tấn công đã lợi dụng đư
 
 Attacker bắt đầu thực hiện reverse shell. Nhiệm vụ của chúng ta là tìm được username và passwd mà kẻ tấn công sau khi thâm nhập vào được server sẽ trích xuất database username và passwd đó ra. 
 
-<img width="968" height="817" alt="image" src="https://github.com/user-attachments/assets/351bf7e3-ce2b-477a-8498-5d7197b8de79" />
+<img width="1273" height="778" alt="image" src="https://github.com/user-attachments/assets/814f0df5-c791-4d3c-bd12-5d0f8436888a" />
 
 Đây là file mà kẻ tấn công sẽ có thể trích xuất được username và passwd đó ra. Em đọc một lúc thì thấy được nó lưu trữ username và passwd bên trong ws-config.php 
 
