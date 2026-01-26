@@ -69,6 +69,6 @@ Em thực hiện follow theo 2 gói tin có request POST dữ liệu tiếp thì
 
 Em đem nó lên cyberchef nốt với phần đầu mà em lấy được từ kĩ thuật `dns tunneling`, kĩ thuật `icmp tunneling` thì em có được phần hoàn chỉnh của dữ liệu được tuồn ra bài này - flags hoàn chỉnh: 
 
-![Uploading image.png…]()
+<img width="1498" height="903" alt="image" src="https://github.com/user-attachments/assets/ae89f12f-e93e-426a-9286-94924d74df22" />
 
 **flags: VSL{n3tw0rk_tunn3l1ng_15_c0mm0n_4tt4ck_t3chn1qu3}**
