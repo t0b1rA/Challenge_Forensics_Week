@@ -43,11 +43,9 @@ Em cắt ra rồi trích xuất lên cyberchef thì được:
 
 Sau đó em thấy các mảnh base64 bị lặp lại và cách nhau từ các kí tự rác, thì em xóa đi các kí tự lặp lại và rác và ghép những mảnh base64 lại với nhau thì được:
 
-<img width="1512" height="827" alt="image" src="https://github.com/user-attachments/assets/f650f159-350a-429f-8eee-c0cd1f43e462" />
+<img width="1509" height="897" alt="image" src="https://github.com/user-attachments/assets/3a72af7b-8e87-4145-965d-84ec80d61828" />
 
 Việc mà trong phần em thu được có các bytes rác, là do trong quá trình exfil dữ liệu ra bằng icmp, thì attacker cũng thực hiện chèn thêm các gói tin rác ở giữa các gói tin tuồn dữ liệu ra, nên mới xảy ra có bytes rác bên trong mục dữ liệu, giờ xóa đi các bytes rác, mảnh base64 lặp lại, và ghép các mảnh base64 lại với nhau để thu được dữ liệu intend.
-
-<img width="1509" height="897" alt="image" src="https://github.com/user-attachments/assets/3a72af7b-8e87-4145-965d-84ec80d61828" />
 
 **part2: l1ng_15_c0mm0n_**
 
@@ -104,14 +102,14 @@ Bài này author cung cấp cho mình một file `.npy` chứa 32-bit floating-p
     - `descr': '<f4'`: quy định kiểu dữ liệu của các phần tử trong mảng
       - `<`: Little-endian (thứ tự byte, byte LSB thì được đặt ở địa chỉ thấp, byte MSB được đặt ở địa chỉ cao hơn)
       - `f`: là số thực
-      - 4 là tương ứng với 32 bit
+      - `4`: là 4 byte tương ứng với 32 bit
 
       => Dữ liêu 32-bits floating Point - như đề đã đề cập.
   - Phần data (nội dung): Ngay sau header là dữ liệu nhị phân thô (raw binary), đây là lý do mà khi chúng ta mở file `.npy` bằng các trình đọc văn bản thông thường, thì đều sẽ in ra các kí tự không đọc được, vì trình soạn thảo văn bản cố gắng chuyển các byte nhị phân đó sang dạng ASCII/Unicode.
  
 <img width="1535" height="788" alt="image" src="https://github.com/user-attachments/assets/0be62bc1-a03e-4764-a474-302bce37d21f" />
 
-Đây là nội dung của file `.npy` là các số thực với khuôn 64x64 số
+Đây là nội dung của file `.npy` là các số thực với mảng 64x64 và có 4096 số thực
 
 Sau khi tìm hiểu sơ lược về file `.npy`, em dựa vào phần hint của author về câu này: `Not all bits are created equal` và `Accurancy is everything`. 
 
