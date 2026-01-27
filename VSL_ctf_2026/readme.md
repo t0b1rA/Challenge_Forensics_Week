@@ -31,7 +31,7 @@ Em cắt ra rồi trích xuất lên cyberchef thì được:
 
 **part1: VSL{n3tw0rk_tunn3**
 
-À vậy đây ra là phần đầu của flags, nó sử dụng kĩ thuật `dns tunneling` để giấu một phần dữ liệu bên trong tên miền được truy vấn tới. Giờ em sẽ tiếp tục tìm tiếp, có thể họ vẫn sẽ sử dụng kĩ thuật này. Em dựa vào địa chỉ ip mà nạn nhân bị tuồng dữ liệu ra địa chỉ ip bên ngoài là `ip.src == 172.26.31.148 && ip.dst == 10.23.11.27`. Em thấy bên trong mục `statistic protocol` vẫn còn 1 giao thức `icmp`, có thể là kẻ tấn công sẽ sử dụng kĩ thuật icmp exfiltration, để tuồng dữ liệu ra ngoài qua phần lenght dư ra trong dữ liệu thực tế của mỗi gói tin khi ping từ ip `172.26.31.148` tới ip `10.23.11.27`.
+À vậy đây ra là phần đầu của flags, nó sử dụng kĩ thuật `dns tunneling` để giấu một phần dữ liệu bên trong tên miền được truy vấn tới. Giờ em sẽ tiếp tục tìm tiếp, có thể họ vẫn sẽ sử dụng kĩ thuật này. Em dựa vào địa chỉ ip mà nạn nhân bị tuồng dữ liệu ra địa chỉ ip bên ngoài là `ip.src == 172.26.31.148 && ip.dst == 10.23.11.27`. Em thấy bên trong mục `statistic protocol` vẫn còn 1 giao thức `icmp`, có thể là kẻ tấn công sẽ sử dụng kĩ thuật icmp exfiltration, để tuồng dữ liệu ra ngoài qua phần lenght của mỗi gói tin khi ping từ ip `172.26.31.148` tới ip `10.23.11.27`.
 
 <img width="1909" height="417" alt="image" src="https://github.com/user-attachments/assets/327e8cda-98d6-4ad8-86f4-afde3823da41" />
 
