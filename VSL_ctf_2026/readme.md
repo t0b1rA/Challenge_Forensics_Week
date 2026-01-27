@@ -72,3 +72,92 @@ Em đem nó lên cyberchef nốt với phần đầu mà em lấy được từ 
 <img width="1498" height="903" alt="image" src="https://github.com/user-attachments/assets/ae89f12f-e93e-426a-9286-94924d74df22" />
 
 **flags: VSL{n3tw0rk_tunn3l1ng_15_c0mm0n_4tt4ck_t3chn1qu3}**
+
+
+
+## Float Precision
+
+<img width="502" height="575" alt="image" src="https://github.com/user-attachments/assets/a08c9bba-6846-4088-8c4d-7d1dc2b6cf41" />
+
+Link đề: https://drive.google.com/file/d/1zbyQqHaltmsd3fxk7ufqmM4DZzqDIzAZ/view?usp=sharing
+
+Bài này author cung cấp cho mình một file `.npy` chứa 32-bit floating-point values, cùng với 1 hint `In floating-point, not all bits are created equal` có nghĩa là trong các dấu phẩy động đó, không phải bits nào cũng được tạo ra giống nhau.
+
+Để làm được bài này thì đầu tiên chúng ta cần phải tìm hiểu file `.npy` là gì? Mục đích của file này là gì?. Cấu trúc của file `.npy` là gì?
+
+- File `.npy` là gì?
+
+  - File `.npy` là một tệp định dạnh nhị phân tiêu chuẩn của thư viện NumPy(Python) để lưu trữ một mảng NumPy đơn lẻ trên ổ đĩa. Định dạng này lưu trữ tất cả thông tin về kích thước(shape), kiểu dữ liệu (dtype) cần thiết để tái tạo lại mảng 1 cách chính xác, ngay cả trên 1 máy tính có kiến trúc khác biệt. Định dạng `.npz` là định dạng tiêu chuẩn để lưu trữ nhiều mảng **NumPy** trên ổ đĩa. Một tệp `.npz` thực chất là 1 tệp zip chứa nhiều tệp `.npy` bên trong, mỗi tệp tương ứng 1 mảng đơn lẻ.
+
+- Mục đích của file `.npy`: Bởi vì nó lưu trữ tất cả thông tin cần thiết để tái tạo mảng, bao gồm kích thước (shape) và kiểu dữ liệu (dtype) trên 1 máy có kiến trúc khác. Cả mảng little-endian và big-endian đều được hỗ trợ, 1 tệp chứa các số little-endian sẽ tạo ra một mảng little-endian trên bất kì máy nào đọc tệp đó.
+
+> `Little-endian` là 1 phương thức lưu trữ dữ liệu mà ở đó byte có giá trị nhỏ nhất (Least Significant Byte - LSB) được đặt tại địa chỉ bộ nhớ thấp nhất và byte lớn nhất (MSB) sẽ được đặt ở địa chỉ cao hơn.
+> `Big-endian` là phương thức lưu trữ dữ liệu đa byte (như số nguyên 16/32 bit) trong bộ nhớ, nơi byte quan trọng nhất (MSB - Most Significant Byte) được đặt tại địa chỉ thấp nhất, còn byte ít quan trọng nhất (LSB) được đặt ở địa chỉ cao nhất
+
+- Cấu trúc của file `.npy`:
+  - Phần header của file `.npy`, chứa các metadata (thông tin mô tả dữ liệu). Trong file `.npy`, header có dạng:
+
+    `“NUMPY v {'descr': '<f4', 'fortran_order': False, 'shape': (64, 64), }`
+
+    - `NUMPY` chính là signature byte giúp chúng ta nhận dạng được đây là file `.npy`.
+   
+    - `descr': '<f4'`: quy định kiểu dữ liệu của các phần tử trong mảng
+      - `<`: Little-endian (thứ tự byte, byte LSB thì được đặt ở địa chỉ thấp, byte MSB được đặt ở địa chỉ cao hơn)
+      - `f`: là số thực
+      - 4 là tương ứng với 32 bit
+
+      => Dữ liêu 32-bits floating Point - như đề đã đề cập.
+  - Phần data (nội dung): Ngay sau header là dữ liệu nhị phân thô (raw binary), đây là lý do mà khi chúng ta mở file `.npy` bằng các trình đọc văn bản thông thường, thì đều sẽ in ra các kí tự không đọc được, vì trình soạn thảo văn bản cố gắng chuyển các byte nhị phân đó sang dạng ASCII/Unicode.
+ 
+<img width="1535" height="788" alt="image" src="https://github.com/user-attachments/assets/0be62bc1-a03e-4764-a474-302bce37d21f" />
+
+Đây là nội dung của file `.npy` là các số thực với khuôn 64x64 số
+
+Sau khi tìm hiểu sơ lược về file `.npy`, em dựa vào phần hint của author về câu này: `Not all bits are created equal` và `Accurancy is everything`. 
+
+Hint đầu tiên mình có thể phân tích rằng author đang ám chỉ đến việc mỗi bits của 1 số thực sẽ khác nhau hoàn toàn về vai trò và mức độ biến đổi của nó, em sẽ phân tích sơ qua về cấu trúc số thực `float32` để mình có thể hình dung được:
+
+- Trong 1 số `float32` được chia thành 3 phần riêng biệt:
+  - Phần **Bit dấu** (Sign Bit -1 bit) 1 bit này có thể là 0 hoặc 1 nó tương ứng với giá trị âm hoặc dương, việc thay đổi 1 bit ở đây để giấu dữ liệu có thể biến 1 số thực từ âm thành dương, tác động rất lớn đến số thực đó -> ảnh hưởng đến file `.npy`.
+
+  - Phần **Bit mũ (Exponent - 8 bit)**, quyết định đến độ lớn của 1 số thực, việc thay đổi 1 bit ở đây có thể biến 1 số thực trở nên nhỏ đi gấp đôi hoặc lớn lên gấp đôi -> cũng sẽ ảnh hưởng lớn đến file `.npy`.
+ 
+  - Phần **Định trị (Mantissa - 23 bit)**: Quyết định độ chính xác (phần lẻ sau giấu phẩy), mức độ ảnh hưởng của nó sẽ nhỏ dần từ trái sang phải, khi các giá trị cuối là các giá trị cực nhỏ -> không ảnh hưởng lớn đến file `.npy`
+ 
+Qua đây em có thể hiểu được rằng nếu chúng ta thay đổi các bit LSB của phần Mantissa thì con số chỉ thay đổi rất ít và sẽ không thể làm hỏng cáu trúc của file, sẽ phù hợp cho việc author giấu dữ liệu trong những bit này. Cùng với hint thứ 2 `Accurancy is everything`, em nghĩ là đang ám chỉ đến Bit quyết định độ chính xác Mantissa này.
+
+Bây giờ em có thể xác định được dữ liệu được giấu vào đâu sẽ ít thay đổi cấu trúc của file nhất, em viết 1 script nhỏ với hành động lần lượt là: 
+
+`đọc file .npy lấy mảng dữ liệu gốc -> chuyển đổi mảng 2 chiều 64x64 thành mảng 1 chiều gồm 4096 phần tử -> chuyển đổi kiểu dữ liệu float32 sang int32 để thao tác trên được từng bit -> trích xuất bit cuối ra -> gom nhóm thành 1 nhóm 8 bit liên tiếp (1 byte kí tự ASCII) -> và ghép thành chuỗi`
+
+```
+import numpy as np
+
+# 1. Load file npy
+data = np.load('image.npy')
+
+# 2. Chuyển đổi các số thực sang dạng bit (view dưới dạng số nguyên 32-bit để lấy bit)
+flatten_data = data.flatten()
+binary_data = flatten_data.view(np.int32)
+
+# 3. Trích xuất bit cuối cùng (LSB) của mỗi số
+extracted_bits = []
+for val in binary_data:
+    extracted_bits.append(str(val & 1))
+
+# 4. Gom nhóm 8 bit thành 1 ký tự (Byte)
+bit_string = "".join(extracted_bits)
+chars = []
+for i in range(0, len(bit_string), 8):
+    byte = bit_string[i:i+8]
+    chars.append(chr(int(byte, 2)))
+
+# 5. In kết quả để tìm Flag
+flag = "".join(chars)
+print(flag)
+```
+<img width="1970" height="420" alt="image" src="https://github.com/user-attachments/assets/72e9eb7c-fb48-4c9a-aac4-ecda4ab486cc" />
+
+**Flag: VSL{1EEE_754_m4nt1ss4_h1d1ng_1s_r34lly_tr1cky_112211!}**
+
+
