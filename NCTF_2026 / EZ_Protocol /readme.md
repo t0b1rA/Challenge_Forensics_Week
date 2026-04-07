@@ -6,7 +6,7 @@ Description: Mục tiêu thật sự là cố gắng nâng quyền thành admin 
 
 <img width="1898" height="412" alt="image" src="https://github.com/user-attachments/assets/0c03af9d-7a2d-42ef-89c4-0cff2669e66e" />
 
-Vì sao lại filter là: `tcp.payload && tcp.flags == 0x0018 && tcp.port == 24529`, khi mình thực hiện follows theo các gói tin được gửi đi bằng flags `PSH,ACK` mình sẽ thấy bên trong gói tin có các payload sau:
+Vì sao lại filter là: `tcp.payload && tcp.flags == 0x0018 && tcp.port == 24529`, khi mình thực hiện follows theo các gói tin được gửi đi bằng flags `PSH,ACK - tương đương với tcp.flags == 0x018` mình sẽ thấy bên trong gói tin có các payload sau, đối với 3 port từ attacker lại có phần payload khác nhau, nhưng cấu trúc packet vẫn giữ nguyên:
 
 ```
 GAME.&.d..5a$'=0#)<'v|l715:axd;014 "9#lyv2+0 wl>
