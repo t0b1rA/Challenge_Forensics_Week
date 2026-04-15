@@ -4,7 +4,7 @@
 
 Link challenge: https://drive.google.com/file/d/1qLfENy_pwemxQaUdaIEUgtIZdpovdFoE/view?usp=sharing
 
-Description: Một file pcap đã được trích xuất từ một node bị compromised trong 1 mạng lưới liên lạc ngầm. Đặc vụ thu thập được file này và để lại cho chúng ta 1 vài lời nhắn: 'The river does not reveal itself. It only flows' and 'not all fields are what they seem. The fragment offset field hides more that offset'. Cùng với một lời nhắc là trong challenge này có rất nhiều fake flag, chúng ta cần làm cẩn thận.
+Description: Một file pcap đã được trích xuất từ một node bị compromised trong 1 mạng lưới liên lạc ngầm. Đặc vụ thu thập được file này và để lại cho chúng ta 1 vài lời nhắn: `The river does not reveal itself. It only flows` và `Not all fields are what they seem. The fragment offset field hides more that offset`. Cùng với một lời nhắc là trong challenge này có rất nhiều fake flag, chúng ta cần làm cẩn thận.
 
 Ok giờ mình sẽ bắt đầu phân tích file pcap này:
 
