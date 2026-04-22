@@ -1,4 +1,4 @@
-<img width="1014" height="859" alt="image" src="https://github.com/user-attachments/assets/73492e88-e438-489c-9e61-bd0c7a70bb87" /># Galaga Archive
+# Galaga Archive
 
 <img width="612" height="672" alt="Screenshot 2026-04-19 012526" src="https://github.com/user-attachments/assets/9f4b86df-d73f-4cbd-a521-ab0d86061052" />
 
